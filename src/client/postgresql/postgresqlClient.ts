@@ -1,13 +1,15 @@
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import winston from 'winston'
 import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
-import { Client } from 'ts-postgres'
+import { Pool } from 'pg'
 
 export class PostgresqlClient {
-  readonly client: Client
+  readonly client: Pool
   readonly logger: winston.Logger
+  private closedConnection = true
+
   private constructor(config: PostgresqlConfig, loggerConfig: LoggerConfig) {
-    this.client = new Client({
+    this.client = new Pool({
       host: config.host,
       port: config.port,
       database: config.name,
@@ -16,17 +18,20 @@ export class PostgresqlClient {
     })
     this.logger = loggerConfig.create(PostgresqlClient.name)
   }
-  static async Create(
+  static Create(
     config: PostgresqlConfig,
     loggerConfig: LoggerConfig
-  ): Promise<PostgresqlClient> {
+  ): PostgresqlClient {
     const instance = new PostgresqlClient(config, loggerConfig)
 
-    await instance.client.connect()
+    instance.client.connect().then(() => {
+      instance.closedConnection = false
+      instance.logger.info('DB connected')
+    })
     return instance
   }
 
   isClosed(): boolean {
-    return this.client.closed
+    return this.closedConnection
   }
 }

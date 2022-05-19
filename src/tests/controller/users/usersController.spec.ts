@@ -14,6 +14,7 @@ describe('Get users', () => {
   const userData: User = {
     id: 'id',
     email: 'mail@mail.com',
+    createdOn: new Date(),
   }
   const users: DataWithPages<User> = { data: [userData], pages: 1 }
   it('returns 200 with the users', async () => {

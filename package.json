@@ -2,11 +2,10 @@
   "name": "microservice-example",
   "version": "1.0.0",
   "main": "app.js",
-  "type": "module",
   "scripts": {
     "local": "nodemon dotenv_config_path=./environments/.env.local",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node --experimental-specifier-resolution=node build/app.js",
+    "start": "npm run build && node build/app.js",
     "lint": "eslint . --ext .ts",
     "test": "jest --runInBand",
     "integration-test": "jest --config=./jest.integration.config.ts --runInBand",

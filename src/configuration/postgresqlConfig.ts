@@ -1,4 +1,4 @@
-import { cleanEnv, num, str, url } from 'envalid'
+import { cleanEnv, num, str } from 'envalid'
 
 interface DbClientConfig {
   DB_HOST: string
