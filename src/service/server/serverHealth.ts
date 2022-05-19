@@ -1,12 +1,8 @@
 import { HealthCheckError } from '@godaddy/terminus'
 
 export class ServerHealth {
-
-  constructor() {
-  }
-
   onHealthCheck = async (): Promise<Record<string, string>> => {
-    let statusOk = true
+    const statusOk = true
     const statusDetails = {}
     if (statusOk) {
       return statusDetails
