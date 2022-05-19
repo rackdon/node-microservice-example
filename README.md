@@ -1,4 +1,10 @@
 # node-microservice-example
+Small node server with:
+- env validation
+- rest calls
+- postgreSql db management
+- unit tests
+- integration tests
 
 ## Commands
 
