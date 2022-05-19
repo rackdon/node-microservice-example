@@ -17,7 +17,8 @@
     "prettier-format:win32": "prettier --config .prettierrc \"./src/**/*.ts\" --write",
     "prettier-format:darwin:linux": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "prettier-format:default": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "migrate": "node-pg-migrate"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,8 @@
     "express": "^4.18.1",
     "helmet": "^5.0.2",
     "morgan": "^1.10.0",
+    "node-pg-migrate": "^6.2.1",
+    "pg": "^8.7.3",
     "run-script-os": "^1.1.6",
     "winston": "^3.7.2",
     "winston-sentry-log": "^1.0.26"

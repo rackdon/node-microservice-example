@@ -10,6 +10,25 @@
 - npm run all-test -> Run all tests
 - npm run test:coverage -> Run all tests and calculate coverage
 
+
+## Migrations
+[more info](https://salsita.github.io/node-pg-migrate/#/)
+
+### Create
+```$xslt
+$ npm run migrate create your migration name
+```
+
+### Migrate
+```$xslt
+$ DATABASE_URL=postgres://owner:owner@localhost:5432/sample_project_test npm run migrate up
+```
+
+### Rollback
+```$xslt
+$ DATABASE_URL=postgres://owner:owner@localhost:5432/sample_project_test npm run migrate down
+```
+
 ## Env vars
 
 Required env vars before launch the service (if no default value present)
