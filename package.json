@@ -47,6 +47,7 @@
     "node-pg-migrate": "^6.2.1",
     "pg": "^8.7.3",
     "run-script-os": "^1.1.6",
+    "ts-postgres": "^1.2.1",
     "winston": "^3.7.2",
     "winston-sentry-log": "^1.0.26"
   },
