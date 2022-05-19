@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "build",
+    "rootDir": "src",  
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+
+    "skipLibCheck": true,       
+    "forceConsistentCasingInFileNames": true ,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.integrationSpec.ts"]
+}
