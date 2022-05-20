@@ -1,7 +1,7 @@
-import { LoggerConfig } from "../../configuration/loggerConfig";
-import winston from "winston";
-import { PostgresqlConfig } from "../../configuration/postgresqlConfig";
-import { Pool, PoolClient } from "pg";
+import { LoggerConfig } from '../../configuration/loggerConfig'
+import winston from 'winston'
+import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
+import { Pool, PoolClient } from 'pg'
 
 export class PostgresqlClient {
   readonly client: Pool
