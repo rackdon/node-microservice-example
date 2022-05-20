@@ -25,6 +25,6 @@ export class ServerHealth {
   }
 
   onShutdown = async (): Promise<Awaited<void>[]> => {
-    return Promise.all([this.pgClient.client.end()])
+    return Promise.all([this.pgClient.closeConnection()])
   }
 }

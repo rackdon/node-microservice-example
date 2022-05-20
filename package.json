@@ -50,6 +50,7 @@
     "winston-sentry-log": "^1.0.26"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.3.1",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.33",
