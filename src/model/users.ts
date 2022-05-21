@@ -3,3 +3,7 @@ export interface User {
   email: string
   createdOn: Date
 }
+
+export interface UserCreation {
+  email: string
+}

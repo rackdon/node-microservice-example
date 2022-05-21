@@ -2,8 +2,10 @@ import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
 import { PostgresqlClient } from '../../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import { DatabaseCleanerPsql } from '../utils/databaseCleanerPsql'
+import { User } from '../../model/users'
+import { Factory } from '../utils/factory'
 
-describe('Get users', () => {
+describe('usersRepository', () => {
   const dbConfig = new PostgresqlConfig({
     DB_HOST: 'localhost',
     DB_PORT: 5432,
@@ -14,12 +16,14 @@ describe('Get users', () => {
   const loggerConfig = new LoggerConfig()
   let postgresqlClient: PostgresqlClient
   let dbCleaner
+  let factory
   beforeAll(async () => {
     postgresqlClient = await PostgresqlClient.CreateAsync(
       dbConfig,
       loggerConfig
     )
     dbCleaner = new DatabaseCleanerPsql(postgresqlClient.client)
+    factory = new Factory(postgresqlClient.client)
   })
 
   beforeEach(async () => {
@@ -29,7 +33,8 @@ describe('Get users', () => {
   afterAll(async () => {
     await postgresqlClient.closeConnection()
   })
-  it('Set element correctly', async () => {
+  it('getUsers', async () => {
+    const user: User = await factory.insertUser()
     expect(1).toEqual(1)
   })
 })
