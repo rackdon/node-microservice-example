@@ -8,14 +8,11 @@ import { mockRequest, MockResponse } from '../utils'
 import { UsersController } from '../../../controller/users/usersController'
 import { BadRequest, Internal } from '../../../model/error'
 import { DataWithPages } from '../../../model/pagination'
+import { generateUser } from '../../utils/generators/usersGenerator'
 
 describe('Get users', () => {
   const loggerConfig = new LoggerConfig()
-  const userData: User = {
-    id: 'id',
-    email: 'mail@mail.com',
-    createdOn: new Date(),
-  }
+  const userData: User = generateUser()
   const users: DataWithPages<User> = { data: [userData], pages: 1 }
   it('returns 200 with the users', async () => {
     const usersService: UsersService = usersServiceMock({

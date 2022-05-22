@@ -6,14 +6,11 @@ import { UsersService } from '../../../service/users/usersService'
 import { DataWithPages } from '../../../model/pagination'
 import { usersRepositoryMock } from '../../mocks/users/usersMocks'
 import { UsersRepository } from '../../../repository/usersRepository'
+import { generateUser } from '../../utils/generators/usersGenerator'
 
 describe('Get users', () => {
   it('returns repository response', async () => {
-    const userData: User = {
-      id: 'id',
-      email: 'mail@mail.com',
-      createdOn: new Date(),
-    }
+    const userData: User = generateUser()
     const response: DataWithPages<User> = { data: [userData], pages: 1 }
     const usersRepository: UsersRepository = usersRepositoryMock({
       getUsers: jest.fn().mockImplementation(() => {
