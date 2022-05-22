@@ -4,11 +4,11 @@ import { LoggerConfig } from '../configuration/loggerConfig'
 import { ApiResponse } from '../model/apiResponse'
 import { DataWithPages } from '../model/pagination'
 import { User } from '../model/users'
-import { Pool } from 'pg'
+import { Sequelize } from 'sequelize'
 
 export class UsersRepository {
   readonly logger: winston.Logger
-  readonly pgClient: Pool
+  readonly pgClient: Sequelize
 
   constructor(pgClient: PostgresqlClient, loggerConfig: LoggerConfig) {
     this.pgClient = pgClient.client

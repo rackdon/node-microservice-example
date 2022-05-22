@@ -1,20 +1,20 @@
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import winston from 'winston'
 import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
-import { Pool, PoolClient } from 'pg'
+import { Sequelize } from 'sequelize'
 
 export class PostgresqlClient {
-  readonly client: Pool
-  private transactionClient: PoolClient | undefined
+  readonly client: Sequelize
   readonly logger: winston.Logger
   private closedConnection = true
 
   private constructor(config: PostgresqlConfig, loggerConfig: LoggerConfig) {
-    this.client = new Pool({
+    this.client = new Sequelize({
+      dialect: 'postgres',
       host: config.host,
       port: config.port,
       database: config.name,
-      user: config.username,
+      username: config.username,
       password: config.password,
     })
     this.logger = loggerConfig.create(PostgresqlClient.name)
@@ -25,8 +25,7 @@ export class PostgresqlClient {
   ): PostgresqlClient {
     const instance = new PostgresqlClient(config, loggerConfig)
 
-    instance.client.connect().then((client) => {
-      instance.transactionClient = client
+    instance.client.validate().then(() => {
       instance.closedConnection = false
       instance.logger.info('DB connected')
     })
@@ -39,8 +38,8 @@ export class PostgresqlClient {
   ): Promise<PostgresqlClient> {
     const instance = new PostgresqlClient(config, loggerConfig)
 
-    instance.transactionClient = await instance.client.connect()
     instance.closedConnection = false
+    await instance.client.validate()
     instance.logger.info('DB connected')
     return instance
   }
@@ -49,12 +48,8 @@ export class PostgresqlClient {
     return this.closedConnection
   }
 
-  getTransactionClient(): PoolClient {
-    return this.transactionClient!!
-  }
-
   async closeConnection(): Promise<void> {
-    this.transactionClient?.release()
-    await this.client.end()
+    await this.client.close()
+    this.logger.info('DB disconnected')
   }
 }
