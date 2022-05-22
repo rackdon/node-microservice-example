@@ -51,3 +51,4 @@ NAME:type(default)
 -   DB_NAME: string
 -   DB_USERNAME: string
 -   DB_PASSWORD: string
+-   DB_LOG: boolean(false)

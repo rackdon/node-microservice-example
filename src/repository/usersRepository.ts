@@ -3,8 +3,9 @@ import { PostgresqlClient } from '../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../configuration/loggerConfig'
 import { ApiResponse } from '../model/apiResponse'
 import { DataWithPages } from '../model/pagination'
-import { User } from '../model/users'
+import { User, UserCreation } from '../model/users'
 import { Sequelize } from 'sequelize'
+import { Internal } from '../model/error'
 
 export class UsersRepository {
   readonly logger: winston.Logger
@@ -15,9 +16,17 @@ export class UsersRepository {
     this.logger = loggerConfig.create(UsersRepository.name)
   }
 
+  async insertUser({ email }: UserCreation): Promise<ApiResponse<User>> {
+    try {
+      const result = await this.pgClient.models.User.create({ email })
+      return [result['dataValues'], null]
+    } catch (e) {
+      return [null, new Internal()]
+    }
+  }
+
   async getUsers(): Promise<ApiResponse<DataWithPages<User>>> {
-    const foo = await this.pgClient.query('SELECT * from users')
-    const user = { id: 'id', email: 'mail@mail.com', createdOn: new Date() }
-    return [{ data: [user], pages: 1 }, null]
+    const users = await this.pgClient.models.User.findAll()
+    return [{ data: users.map((x) => x.get()), pages: 1 }, null]
   }
 }

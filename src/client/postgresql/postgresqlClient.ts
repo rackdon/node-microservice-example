@@ -2,6 +2,7 @@ import { LoggerConfig } from '../../configuration/loggerConfig'
 import winston from 'winston'
 import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
 import { Sequelize } from 'sequelize'
+import { EntitiesInitializer } from '../../repository/entity/entitiesInitializer'
 
 export class PostgresqlClient {
   readonly client: Sequelize
@@ -9,6 +10,7 @@ export class PostgresqlClient {
   private closedConnection = true
 
   private constructor(config: PostgresqlConfig, loggerConfig: LoggerConfig) {
+    const dbLogger = config.log ? loggerConfig.create('DB') : null
     this.client = new Sequelize({
       dialect: 'postgres',
       host: config.host,
@@ -16,6 +18,7 @@ export class PostgresqlClient {
       database: config.name,
       username: config.username,
       password: config.password,
+      logging: config.log ? (...msg) => dbLogger!!.debug(msg) : false,
     })
     this.logger = loggerConfig.create(PostgresqlClient.name)
   }
@@ -26,6 +29,7 @@ export class PostgresqlClient {
     const instance = new PostgresqlClient(config, loggerConfig)
 
     instance.client.validate().then(() => {
+      new EntitiesInitializer(instance.client)
       instance.closedConnection = false
       instance.logger.info('DB connected')
     })
@@ -40,6 +44,7 @@ export class PostgresqlClient {
 
     instance.closedConnection = false
     await instance.client.validate()
+    new EntitiesInitializer(instance.client)
     instance.logger.info('DB connected')
     return instance
   }
