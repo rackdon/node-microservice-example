@@ -10,7 +10,7 @@ exports.up = pgm => {
       notNull: true},
     email: { type: 'text', notNull: true,
       unique: true},
-    createdOn: {
+    created_on: {
       type: 'timestamp without time zone',
       notNull: true,
       default: pgm.func('current_timestamp'),
@@ -19,5 +19,5 @@ exports.up = pgm => {
 };
 
 exports.down = pgm => {
-  pgm.dropTable('users')
+  pgm.dropTable('users');
 };

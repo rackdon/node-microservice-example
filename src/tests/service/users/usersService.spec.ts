@@ -1,12 +1,33 @@
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 
-import { User } from '../../../model/users'
+import { User, UserCreation } from '../../../model/users'
 import { LoggerConfig } from '../../../configuration/loggerConfig'
 import { UsersService } from '../../../service/users/usersService'
 import { DataWithPages } from '../../../model/pagination'
 import { usersRepositoryMock } from '../../mocks/users/usersMocks'
 import { UsersRepository } from '../../../repository/usersRepository'
-import { generateUser } from '../../utils/generators/usersGenerator'
+import {
+  generateUser,
+  generateUserCreation,
+} from '../../utils/generators/usersGenerator'
+
+describe('Create user', () => {
+  it('returns repository response', async () => {
+    const userCreation: UserCreation = generateUserCreation()
+    const user: User = generateUser()
+    const usersRepository: UsersRepository = usersRepositoryMock({
+      insertUser: jest.fn().mockImplementation(() => {
+        return [user, null]
+      }),
+    })
+    const loggerConfig = new LoggerConfig()
+    const service = new UsersService(usersRepository, loggerConfig)
+    const result = await service.createUser(userCreation)
+
+    expect(result).toEqual([user, null])
+    expect(usersRepository.insertUser).toBeCalledWith(userCreation)
+  })
+})
 
 describe('Get users', () => {
   it('returns repository response', async () => {
@@ -22,5 +43,6 @@ describe('Get users', () => {
     const result = await service.getUsers()
 
     expect(result).toEqual([response, null])
+    expect(usersRepository.getUsers).toBeCalledTimes(1)
   })
 })

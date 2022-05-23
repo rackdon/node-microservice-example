@@ -5,6 +5,7 @@ export function usersServiceMock(args: Record<string, unknown>): UsersService {
   return <UsersService>{
     usersRepository: args.usersRepository,
     logger: args.logger,
+    createUser: args.createUser,
     getUsers: args.getUsers,
   }
 }
@@ -15,6 +16,7 @@ export function usersRepositoryMock(
   return <UsersRepository>{
     pgClient: args.pgClient,
     logger: args.logger,
+    insertUser: args.insertUser,
     getUsers: args.getUsers,
   }
 }

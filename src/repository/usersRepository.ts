@@ -5,7 +5,7 @@ import { ApiResponse } from '../model/apiResponse'
 import { DataWithPages } from '../model/pagination'
 import { User, UserCreation } from '../model/users'
 import { Sequelize } from 'sequelize'
-import { Internal } from '../model/error'
+import { manageDbErrors } from './errors'
 
 export class UsersRepository {
   readonly logger: winston.Logger
@@ -21,12 +21,12 @@ export class UsersRepository {
       const result = await this.pgClient.models.User.create({ email })
       return [result['dataValues'], null]
     } catch (e) {
-      return [null, new Internal()]
+      return [null, manageDbErrors(e, this.logger)]
     }
   }
 
   async getUsers(): Promise<ApiResponse<DataWithPages<User>>> {
-    const users = await this.pgClient.models.User.findAll()
-    return [{ data: users.map((x) => x.get()), pages: 1 }, null]
+    const users = await this.pgClient.models.User.findAndCountAll({ limit: 1 })
+    return [{ data: users.rows.map((x) => x.get()), pages: 1 }, null]
   }
 }

@@ -7,6 +7,7 @@ export class Routes {
   constructor(usersController: UsersController) {
     // USERS
 
+    this.router.post('/users', usersController.createUser)
     this.router.get('/users', usersController.getUsers)
   }
 }

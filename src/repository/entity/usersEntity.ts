@@ -24,6 +24,7 @@ export class UsersEntity {
     sequelize.define('User', this.userModel, {
       tableName: this.table,
       timestamps: false,
+      underscored: true,
     })
   }
 }

@@ -3,7 +3,7 @@
 import winston from 'winston'
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import { UsersService } from '../../service/users/usersService'
-import { BadRequest, Internal } from '../../model/error'
+import { BadRequest, Conflict, Internal } from '../../model/error'
 
 export class UsersController {
   readonly usersService: UsersService
@@ -12,6 +12,28 @@ export class UsersController {
   constructor(usersService: UsersService, loggerConfig: LoggerConfig) {
     this.usersService = usersService
     this.logger = loggerConfig.create(UsersController.name)
+  }
+
+  createUser = async (req, res): Promise<void> => {
+    const [user, error] = await this.usersService.createUser(req.body)
+    if (user) {
+      res.status(201).json(user)
+    } else {
+      switch (error?.constructor) {
+        case Conflict: {
+          res.status(409).json(error)
+          break
+        }
+        case Internal: {
+          res.status(500).send()
+          break
+        }
+        default: {
+          this.logger.warn(`Unexpected error: ${error}`)
+          res.status(500).send()
+        }
+      }
+    }
   }
 
   getUsers = async (req, res): Promise<void> => {
