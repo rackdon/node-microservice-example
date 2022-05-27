@@ -7,6 +7,7 @@ import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
 import { Conflict } from '../../model/error'
+import { UserCreationValidator } from '../../routes/validators/users/userCreationValidator'
 
 describe('usersRepository', () => {
   const dbConfig = new PostgresqlConfig({
@@ -52,10 +53,7 @@ describe('usersRepository', () => {
   })
   it('getUsers', async () => {
     const user: User = await factory.insertUser()
-    const user2: User = await factory.insertUser()
     const result = await usersRepository.getUsers()
-    await usersRepository.insertUser({ email: 'asdf' })
-    await usersRepository.insertUser({ email: 'asdf' })
     expect(result).toEqual([{ data: [user], pages: 1 }, null])
   })
 })
