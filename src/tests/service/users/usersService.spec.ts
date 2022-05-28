@@ -38,7 +38,7 @@ describe('Get users', () => {
     const paginationFilters: Pagination = {
       pageSize: filters.pageSize,
       page: 0,
-      sort: null,
+      sort: [],
       sortDir: null,
     }
     const usersRepository: UsersRepository = usersRepositoryMock({

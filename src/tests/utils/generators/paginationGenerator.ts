@@ -9,7 +9,7 @@ export function generatePagination(
   return {
     page: page || 0,
     pageSize: pageSize || 10,
-    sort: sort || null,
+    sort: sort || [],
     sortDir: sortDir || null,
   }
 }
