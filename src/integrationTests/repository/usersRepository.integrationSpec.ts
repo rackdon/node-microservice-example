@@ -7,7 +7,7 @@ import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
 import { Conflict } from '../../model/error'
-import { UserCreationValidator } from '../../routes/validators/users/userCreationValidator'
+import { generatePagination } from '../../tests/utils/generators/paginationGenerator'
 
 describe('usersRepository', () => {
   const dbConfig = new PostgresqlConfig({
@@ -53,7 +53,13 @@ describe('usersRepository', () => {
   })
   it('getUsers', async () => {
     const user: User = await factory.insertUser()
-    const result = await usersRepository.getUsers()
+    // const user2: User = await factory.insertUser()
+    // const user3: User = await factory.insertUser()
+    // const user4: User = await factory.insertUser()
+    // const user5: User = await factory.insertUser()
+    // const user6: User = await factory.insertUser()
+    // const user7: User = await factory.insertUser()
+    const result = await usersRepository.getUsers({}, generatePagination())
     expect(result).toEqual([{ data: [user], pages: 1 }, null])
   })
 })

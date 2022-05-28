@@ -3,7 +3,7 @@
 export function mockRequest(
   params: Record<string, any> | null,
   body: Record<string, any> | null,
-  query: Record<string, string> | null,
+  query: Record<string, any> | null,
   args: Record<string, string> = {}
 ): Record<string, any> {
   return {

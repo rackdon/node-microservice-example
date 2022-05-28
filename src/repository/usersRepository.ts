@@ -2,10 +2,11 @@ import winston from 'winston'
 import { PostgresqlClient } from '../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../configuration/loggerConfig'
 import { ApiResponse } from '../model/apiResponse'
-import { DataWithPages } from '../model/pagination'
-import { User, UserCreation } from '../model/users'
+import { DataWithPages, Pagination } from '../model/pagination'
+import { User, UserCreation, UsersFilters } from '../model/users'
 import { Sequelize } from 'sequelize'
 import { manageDbErrors } from './errors'
+import { getPages, paginationQuery } from './pagination'
 
 export class UsersRepository {
   readonly logger: winston.Logger
@@ -25,8 +26,17 @@ export class UsersRepository {
     }
   }
 
-  async getUsers(): Promise<ApiResponse<DataWithPages<User>>> {
-    const users = await this.pgClient.models.User.findAndCountAll({ limit: 1 })
-    return [{ data: users.rows.map((x) => x.get()), pages: 1 }, null]
+  async getUsers(
+    filters: UsersFilters,
+    pagination: Pagination
+  ): Promise<ApiResponse<DataWithPages<User>>> {
+    // TODO create where clauses
+    const query = paginationQuery(pagination)
+    const users = await this.pgClient.models.User.findAndCountAll(query)
+    const usersData = {
+      data: users.rows.map((x) => x.get()),
+      pages: getPages(users.count, pagination.pageSize),
+    }
+    return [usersData, null]
   }
 }

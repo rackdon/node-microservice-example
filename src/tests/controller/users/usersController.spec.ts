@@ -77,6 +77,7 @@ describe('Get users', () => {
   const loggerConfig = new LoggerConfig()
   const userData: User = generateUser()
   const users: DataWithPages<User> = { data: [userData], pages: 1 }
+  const query = { pageSize: 5 }
   it('returns 200 with the users', async () => {
     const usersService: UsersService = usersServiceMock({
       getUsers: jest.fn().mockImplementation(() => {
@@ -86,11 +87,11 @@ describe('Get users', () => {
     const mockResponse = new MockResponse()
     const controller = new UsersController(usersService, loggerConfig)
 
-    await controller.getUsers(mockRequest(null, null, null), mockResponse)
+    await controller.getUsers(mockRequest(null, null, query), mockResponse)
 
     expect(mockResponse.statusCode).toEqual(200)
     expect(mockResponse.body).toEqual(users)
-    expect(usersService.getUsers).toBeCalledTimes(1)
+    expect(usersService.getUsers).toBeCalledWith(query)
   })
 
   it('returns 400 with errors', async () => {

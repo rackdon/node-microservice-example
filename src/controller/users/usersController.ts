@@ -37,7 +37,7 @@ export class UsersController {
   }
 
   getUsers = async (req, res): Promise<void> => {
-    const [users, error] = await this.usersService.getUsers()
+    const [users, error] = await this.usersService.getUsers(req.query)
     if (users) {
       res.status(200).json(users)
     } else {

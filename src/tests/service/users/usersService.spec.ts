@@ -1,9 +1,9 @@
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 
-import { User, UserCreation } from '../../../model/users'
+import { User, UserCreation, UsersFilters } from '../../../model/users'
 import { LoggerConfig } from '../../../configuration/loggerConfig'
 import { UsersService } from '../../../service/users/usersService'
-import { DataWithPages } from '../../../model/pagination'
+import { DataWithPages, Pagination } from '../../../model/pagination'
 import { usersRepositoryMock } from '../../mocks/users/usersMocks'
 import { UsersRepository } from '../../../repository/usersRepository'
 import {
@@ -33,6 +33,14 @@ describe('Get users', () => {
   it('returns repository response', async () => {
     const userData: User = generateUser()
     const response: DataWithPages<User> = { data: [userData], pages: 1 }
+    const filters = { email: 'email', pageSize: 5 }
+    const userFilters: UsersFilters = { email: filters.email }
+    const paginationFilters: Pagination = {
+      pageSize: filters.pageSize,
+      page: 0,
+      sort: null,
+      sortDir: null,
+    }
     const usersRepository: UsersRepository = usersRepositoryMock({
       getUsers: jest.fn().mockImplementation(() => {
         return [response, null]
@@ -40,9 +48,12 @@ describe('Get users', () => {
     })
     const loggerConfig = new LoggerConfig()
     const service = new UsersService(usersRepository, loggerConfig)
-    const result = await service.getUsers()
+    const result = await service.getUsers(filters)
 
     expect(result).toEqual([response, null])
-    expect(usersRepository.getUsers).toBeCalledTimes(1)
+    expect(usersRepository.getUsers).toBeCalledWith(
+      userFilters,
+      paginationFilters
+    )
   })
 })
