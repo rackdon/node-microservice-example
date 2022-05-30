@@ -1,7 +1,8 @@
 import { Router } from 'express'
 import { UsersController } from '../controller/users/usersController'
-import { validateBody } from './validators/validator'
+import { validateBody, validateQueryParams } from './validators/validator'
 import { UserCreationValidator } from './validators/users/userCreationValidator'
+import { UserFilterValidator } from './validators/users/userFiltersValidator'
 
 export class Routes {
   readonly router: Router = Router()
@@ -14,6 +15,10 @@ export class Routes {
       validateBody(UserCreationValidator.ValidationInstance),
       usersController.createUser
     )
-    this.router.get('/users', usersController.getUsers)
+    this.router.get(
+      '/users',
+      validateQueryParams(UserFilterValidator.ValidationInstance),
+      usersController.getUsers
+    )
   }
 }
