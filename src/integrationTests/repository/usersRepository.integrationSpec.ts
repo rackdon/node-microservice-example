@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-unused-vars */
+
 import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
 import { PostgresqlClient } from '../../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../../configuration/loggerConfig'
@@ -51,15 +53,19 @@ describe('usersRepository', () => {
     const result = await usersRepository.insertUser({ email })
     expect(result[1]?.constructor).toEqual(Conflict)
   })
-  it('getUsers', async () => {
+  it('getUsers returns all users', async () => {
     const user: User = await factory.insertUser()
-    // const user2: User = await factory.insertUser()
-    // const user3: User = await factory.insertUser()
-    // const user4: User = await factory.insertUser()
-    // const user5: User = await factory.insertUser()
-    // const user6: User = await factory.insertUser()
-    // const user7: User = await factory.insertUser()
     const result = await usersRepository.getUsers({}, generatePagination())
     expect(result).toEqual([{ data: [user], pages: 1 }, null])
+  })
+
+  it('getUsers returns all users that match email query', async () => {
+    const user1: User = await factory.insertUser()
+    const user2: User = await factory.insertUser()
+    const result = await usersRepository.getUsers(
+      { email: user2.email },
+      generatePagination()
+    )
+    expect(result).toEqual([{ data: [user2], pages: 1 }, null])
   })
 })

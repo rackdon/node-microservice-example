@@ -6,7 +6,7 @@ export interface PaginationQuery {
   offset: number
   order: Order[]
 }
-export function paginationQuery({
+export function getPaginationQuery({
   page,
   pageSize,
   sort,

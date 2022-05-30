@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import winston from 'winston'
 import { PostgresqlClient } from '../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../configuration/loggerConfig'
@@ -6,7 +8,7 @@ import { DataWithPages, Pagination } from '../model/pagination'
 import { User, UserCreation, UsersFilters } from '../model/users'
 import { Sequelize } from 'sequelize'
 import { manageDbErrors } from './errors'
-import { getPages, paginationQuery } from './pagination'
+import { getPages, getPaginationQuery } from './pagination'
 
 export class UsersRepository {
   readonly logger: winston.Logger
@@ -26,12 +28,21 @@ export class UsersRepository {
     }
   }
 
+  private getFilters(userFilters: UsersFilters): Record<string, any> {
+    const filters = {}
+    if (userFilters.email) {
+      filters['email'] = userFilters.email
+    }
+    return filters
+  }
+
   async getUsers(
     filters: UsersFilters,
     pagination: Pagination
   ): Promise<ApiResponse<DataWithPages<User>>> {
-    // TODO create where clauses
-    const query = paginationQuery(pagination)
+    const paginationQuery = getPaginationQuery(pagination)
+    const userFilters = this.getFilters(filters)
+    const query = { ...paginationQuery, where: userFilters }
     const users = await this.pgClient.models.User.findAndCountAll(query)
     const usersData = {
       data: users.rows.map((x) => x.get()),
