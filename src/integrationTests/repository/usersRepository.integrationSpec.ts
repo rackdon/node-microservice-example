@@ -47,15 +47,23 @@ describe('usersRepository', () => {
   })
   it('insertUser inserts the user in the db and returns it', async () => {
     const email = 'mail@mail.com'
+    const name = 'name'
+    const surname = 'surname'
     const result: Either<ApiError, User> = await usersRepository.insertUser({
       email,
+      name,
+      surname,
     })
-    expectRight(result, (x) => x.email).toEqual(email)
+    expectRight(result, (x) => {
+      return { email: x.email, name: x.name, surname: x.surname }
+    }).toEqual({ email, name, surname })
   })
   it('insertUser returns conflict', async () => {
     const email = 'mail@mail.com'
+    const name = 'name'
+    const surname = 'surname'
     await factory.insertUser(generateUser(undefined, email, undefined))
-    const result = await usersRepository.insertUser({ email })
+    const result = await usersRepository.insertUser({ email, name, surname })
     expectLeft(result).toEqual(new Conflict(['email must be unique']))
   })
   it('getUsers returns all users', async () => {

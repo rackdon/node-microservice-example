@@ -11,9 +11,23 @@ export class UsersEntity {
     },
     email: {
       type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    surname: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     createdOn: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+      allowNull: false,
+    },
+    updatedOn: {
       type: DataTypes.DATE,
       defaultValue: new Date(),
       allowNull: false,

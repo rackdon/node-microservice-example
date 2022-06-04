@@ -20,9 +20,17 @@ export class UsersRepository {
     this.logger = loggerConfig.create(UsersRepository.name)
   }
 
-  async insertUser({ email }: UserCreation): Promise<Either<ApiError, User>> {
+  async insertUser({
+    email,
+    name,
+    surname,
+  }: UserCreation): Promise<Either<ApiError, User>> {
     const result = await EitherI.catchA(async () => {
-      const result = await this.pgClient.models.User.create({ email })
+      const result = await this.pgClient.models.User.create({
+        email,
+        name,
+        surname,
+      })
       return result['dataValues']
     })
     return result.mapLeft((e) => {
@@ -34,6 +42,12 @@ export class UsersRepository {
     const filters = {}
     if (userFilters.email) {
       filters['email'] = userFilters.email
+    }
+    if (userFilters.name) {
+      filters['name'] = userFilters.name
+    }
+    if (userFilters.surname) {
+      filters['surname'] = userFilters.surname
     }
     return filters
   }
