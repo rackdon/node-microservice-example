@@ -113,8 +113,6 @@ export class EitherI<A, B> {
   extractLeft(): A {
     return this.a
   }
-
-  // TODO flatten
 }
 
 export type Either<A, B> = EitherI<A, any> | EitherI<any, B>
