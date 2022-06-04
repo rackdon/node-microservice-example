@@ -8,8 +8,10 @@ import { User } from '../../model/users'
 import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
-import { Conflict } from '../../model/error'
+import { ApiError, Conflict } from '../../model/error'
 import { generatePagination } from '../../tests/utils/generators/paginationGenerator'
+import { Either } from '../../model/either'
+import { expectLeft, expectRight } from '../../tests/utils/expects'
 
 describe('usersRepository', () => {
   const dbConfig = new PostgresqlConfig({
@@ -44,19 +46,21 @@ describe('usersRepository', () => {
   })
   it('insertUser inserts the user in the db and returns it', async () => {
     const email = 'mail@mail.com'
-    const result = await usersRepository.insertUser({ email })
-    expect(result[0]?.email).toEqual(email)
+    const result: Either<ApiError, User> = await usersRepository.insertUser({
+      email,
+    })
+    expectRight(result, (x) => x.email).toEqual(email)
   })
   it('insertUser returns conflict', async () => {
     const email = 'mail@mail.com'
     await factory.insertUser(generateUser(undefined, email, undefined))
     const result = await usersRepository.insertUser({ email })
-    expect(result[1]?.constructor).toEqual(Conflict)
+    expectLeft(result).toEqual(new Conflict(['email must be unique']))
   })
   it('getUsers returns all users', async () => {
     const user: User = await factory.insertUser()
     const result = await usersRepository.getUsers({}, generatePagination())
-    expect(result).toEqual([{ data: [user], pages: 1 }, null])
+    expectRight(result).toEqual({ data: [user], pages: 1 })
   })
 
   it('getUsers returns all users that match email query', async () => {
@@ -66,6 +70,6 @@ describe('usersRepository', () => {
       { email: user2.email },
       generatePagination()
     )
-    expect(result).toEqual([{ data: [user2], pages: 1 }, null])
+    expectRight(result).toEqual({ data: [user2], pages: 1 })
   })
 })

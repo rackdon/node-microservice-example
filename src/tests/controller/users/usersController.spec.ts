@@ -12,6 +12,7 @@ import {
   generateUser,
   generateUserCreation,
 } from '../../utils/generators/usersGenerator'
+import { EitherI } from '../../../model/either'
 
 describe('Create user', () => {
   const loggerConfig = new LoggerConfig()
@@ -20,7 +21,7 @@ describe('Create user', () => {
     const createdUser: User = generateUser()
     const usersService: UsersService = usersServiceMock({
       createUser: jest.fn().mockImplementation(() => {
-        return [createdUser, null]
+        return EitherI.Right(createdUser)
       }),
     })
     const mockResponse = new MockResponse()
@@ -39,7 +40,7 @@ describe('Create user', () => {
   it('returns 409 with errors', async () => {
     const usersService: UsersService = usersServiceMock({
       createUser: jest.fn().mockImplementation(() => {
-        return [null, new Conflict(['error'])]
+        return EitherI.Left(new Conflict(['error']))
       }),
     })
     const mockResponse = new MockResponse()
@@ -57,7 +58,7 @@ describe('Create user', () => {
   it('returns 500', async () => {
     const usersService: UsersService = usersServiceMock({
       createUser: jest.fn().mockImplementation(() => {
-        return [null, new Internal()]
+        return EitherI.Left(new Internal())
       }),
     })
     const mockResponse = new MockResponse()
@@ -81,7 +82,7 @@ describe('Get users', () => {
   it('returns 200 with the users', async () => {
     const usersService: UsersService = usersServiceMock({
       getUsers: jest.fn().mockImplementation(() => {
-        return [users, null]
+        return EitherI.Right(users)
       }),
     })
     const mockResponse = new MockResponse()
@@ -97,7 +98,7 @@ describe('Get users', () => {
   it('returns 400 with errors', async () => {
     const usersService: UsersService = usersServiceMock({
       getUsers: jest.fn().mockImplementation(() => {
-        return [null, new BadRequest(['error'])]
+        return EitherI.Left(new BadRequest(['error']))
       }),
     })
     const mockResponse = new MockResponse()
@@ -112,7 +113,7 @@ describe('Get users', () => {
   it('returns 500', async () => {
     const usersService: UsersService = usersServiceMock({
       getUsers: jest.fn().mockImplementation(() => {
-        return [null, new Internal()]
+        return EitherI.Left(new Internal())
       }),
     })
     const mockResponse = new MockResponse()

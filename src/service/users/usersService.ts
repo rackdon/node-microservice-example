@@ -1,6 +1,5 @@
 import winston from 'winston'
 import { LoggerConfig } from '../../configuration/loggerConfig'
-import { ApiResponse } from '../../model/apiResponse'
 import {
   PaginatedUsersFilters,
   toUsersFilters,
@@ -9,6 +8,8 @@ import {
 } from '../../model/users'
 import { DataWithPages, toPagination } from '../../model/pagination'
 import { UsersRepository } from '../../repository/usersRepository'
+import { Either } from '../../model/either'
+import { ApiError } from '../../model/error'
 
 export class UsersService {
   readonly logger: winston.Logger
@@ -19,13 +20,15 @@ export class UsersService {
     this.usersRepository = usersRepository
   }
 
-  async createUser(userCreation: UserCreation): Promise<ApiResponse<User>> {
+  async createUser(
+    userCreation: UserCreation
+  ): Promise<Either<ApiError, User>> {
     return this.usersRepository.insertUser(userCreation)
   }
 
   async getUsers(
     filters: PaginatedUsersFilters
-  ): Promise<ApiResponse<DataWithPages<User>>> {
+  ): Promise<Either<ApiError, DataWithPages<User>>> {
     const userFilters = toUsersFilters(filters)
     const paginationFilters = toPagination(filters)
     return this.usersRepository.getUsers(userFilters, paginationFilters)

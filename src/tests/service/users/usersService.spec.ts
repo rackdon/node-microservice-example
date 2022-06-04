@@ -10,6 +10,8 @@ import {
   generateUser,
   generateUserCreation,
 } from '../../utils/generators/usersGenerator'
+import { EitherI } from '../../../model/either'
+import { expectRight } from '../../utils/expects'
 
 describe('Create user', () => {
   it('returns repository response', async () => {
@@ -17,14 +19,14 @@ describe('Create user', () => {
     const user: User = generateUser()
     const usersRepository: UsersRepository = usersRepositoryMock({
       insertUser: jest.fn().mockImplementation(() => {
-        return [user, null]
+        return EitherI.Right(user)
       }),
     })
     const loggerConfig = new LoggerConfig()
     const service = new UsersService(usersRepository, loggerConfig)
     const result = await service.createUser(userCreation)
 
-    expect(result).toEqual([user, null])
+    expectRight(result).toEqual(user)
     expect(usersRepository.insertUser).toBeCalledWith(userCreation)
   })
 })
@@ -43,14 +45,14 @@ describe('Get users', () => {
     }
     const usersRepository: UsersRepository = usersRepositoryMock({
       getUsers: jest.fn().mockImplementation(() => {
-        return [response, null]
+        return EitherI.Right(response)
       }),
     })
     const loggerConfig = new LoggerConfig()
     const service = new UsersService(usersRepository, loggerConfig)
     const result = await service.getUsers(filters)
 
-    expect(result).toEqual([response, null])
+    expectRight(result).toEqual(response)
     expect(usersRepository.getUsers).toBeCalledWith(
       userFilters,
       paginationFilters
