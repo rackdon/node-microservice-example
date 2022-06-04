@@ -3,6 +3,7 @@ import { UsersController } from '../controller/users/usersController'
 import { validateBody, validateQueryParams } from './validators/validator'
 import { UserCreationValidator } from './validators/users/userCreationValidator'
 import { UserFilterValidator } from './validators/users/userFiltersValidator'
+import { UserEditionValidator } from './validators/users/userEditionValidator'
 
 export class Routes {
   readonly router: Router = Router()
@@ -14,6 +15,11 @@ export class Routes {
       '/users',
       validateBody(UserCreationValidator.ValidationInstance),
       usersController.createUser
+    )
+    this.router.patch(
+      '/users/:id',
+      validateBody(UserEditionValidator.ValidationInstance),
+      usersController.editUser
     )
     this.router.get(
       '/users',

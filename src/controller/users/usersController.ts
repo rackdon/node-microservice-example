@@ -45,6 +45,29 @@ export class UsersController {
     )
   }
 
+  editUser = async (req, res): Promise<void> => {
+    const result = await this.usersService.editUser(req.params.id, req.body)
+    result.fold(
+      (error: ApiError) => {
+        switch (error.constructor) {
+          case NotFound: {
+            res.status(404).send()
+            break
+          }
+          case Internal: {
+            res.status(500).send()
+            break
+          }
+          default: {
+            this.logger.warn(`Unexpected error: ${error}`)
+            res.status(500).send()
+          }
+        }
+      },
+      (user: User) => res.status(200).json(user)
+    )
+  }
+
   getUsers = async (req, res): Promise<void> => {
     const result = await this.usersService.getUsers(req.query)
     result.fold(

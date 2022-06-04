@@ -9,17 +9,11 @@ export interface User {
   updatedOn: Date
 }
 
-export interface UserCreation {
-  email: string
-  name: string
-  surname: string
-}
+export type UserCreation = Pick<User, 'email' | 'name' | 'surname'>
 
-export interface UsersFilters {
-  email?: string
-  name?: string
-  surname?: string
-}
+export type UserEdition = Partial<Pick<User, 'name' | 'surname'>>
+
+export type UsersFilters = Partial<Pick<User, 'email' | 'name' | 'surname'>>
 
 export function toUsersFilters({
   email,

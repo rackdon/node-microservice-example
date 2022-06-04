@@ -1,14 +1,17 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-import { IsEmail, IsNotEmpty } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 import { UserCreation } from '../../../model/users'
 
 export class UserCreationValidator {
   @IsEmail()
   email!: string
 
+  @IsString()
   @IsNotEmpty()
   name!: string
+
+  @IsString()
   @IsNotEmpty()
   surname!: string
 

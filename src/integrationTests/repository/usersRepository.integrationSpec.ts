@@ -4,7 +4,7 @@ import { PostgresqlConfig } from '../../configuration/postgresqlConfig'
 import { PostgresqlClient } from '../../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import { DatabaseCleanerPsql } from '../utils/databaseCleanerPsql'
-import { User } from '../../model/users'
+import { User, UserEdition } from '../../model/users'
 import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
@@ -58,6 +58,7 @@ describe('usersRepository', () => {
       return { email: x.email, name: x.name, surname: x.surname }
     }).toEqual({ email, name, surname })
   })
+
   it('insertUser returns conflict', async () => {
     const email = 'mail@mail.com'
     const name = 'name'
@@ -66,6 +67,22 @@ describe('usersRepository', () => {
     const result = await usersRepository.insertUser({ email, name, surname })
     expectLeft(result).toEqual(new Conflict(['email must be unique']))
   })
+
+  it('update user returns user updated', async () => {
+    const name = 'name'
+    const user: User = await factory.insertUser()
+    const updateData: UserEdition = { name }
+    const result = await usersRepository.updateUser(user.id, updateData)
+    expectRight(result, (x) => x.name).toEqual(name)
+  })
+
+  it('update user returns not found', async () => {
+    const userId = randomUUID()
+    const updateData: UserEdition = { name: 'asdf' }
+    const result = await usersRepository.updateUser(userId, updateData)
+    expectLeft(result, (x) => x.constructor).toEqual(NotFound)
+  })
+
   it('getUsers returns all users', async () => {
     const user: User = await factory.insertUser()
     const result = await usersRepository.getUsers({}, generatePagination())
@@ -108,6 +125,6 @@ describe('usersRepository', () => {
 
   it('deleteById manage db error correctly', async () => {
     const result = await usersRepository.deleteUserById('asdf')
-    expectLeft(result).toEqual(new Internal())
+    expectLeft(result, (x) => x.constructor).toEqual(Internal)
   })
 })

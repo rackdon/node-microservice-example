@@ -4,7 +4,7 @@ import winston from 'winston'
 import { PostgresqlClient } from '../client/postgresql/postgresqlClient'
 import { LoggerConfig } from '../configuration/loggerConfig'
 import { DataWithPages, Pagination } from '../model/pagination'
-import { User, UserCreation, UsersFilters } from '../model/users'
+import { User, UserCreation, UserEdition, UsersFilters } from '../model/users'
 import { Sequelize } from 'sequelize'
 import { manageDbErrors } from './errors'
 import { getPages, getPaginationQuery } from './pagination'
@@ -36,6 +36,29 @@ export class UsersRepository {
     return result.mapLeft((e) => {
       return manageDbErrors(e, this.logger)
     })
+  }
+
+  async updateUser(
+    id: string,
+    data: UserEdition
+  ): Promise<Either<ApiError, User>> {
+    const result = await EitherI.catchA(async () => {
+      const [elems, ressultArr] = await this.pgClient.models.User.update(
+        { ...data, updatedOn: new Date() },
+        {
+          where: { id },
+          returning: true,
+        }
+      )
+      return elems === 1
+        ? ressultArr[0]['dataValues']
+        : EitherI.Left(new NotFound())
+    })
+    return result
+      .mapLeft((e) => {
+        return manageDbErrors(e, this.logger)
+      })
+      .bind()
   }
 
   private getFilters(userFilters: UsersFilters): Record<string, any> {

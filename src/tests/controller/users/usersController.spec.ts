@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 
 import { LoggerConfig } from '../../../configuration/loggerConfig'
-import { User, UserCreation } from '../../../model/users'
+import { User, UserCreation, UserEdition } from '../../../model/users'
 import { UsersService } from '../../../service/users/usersService'
 import { usersServiceMock } from '../../mocks/users/usersMocks'
 import { mockRequest, MockResponse } from '../utils'
@@ -72,6 +72,65 @@ describe('Create user', () => {
 
     expect(mockResponse.statusCode).toEqual(500)
     expect(usersService.createUser).toBeCalledWith(userCreation)
+  })
+})
+
+describe('Edit user', () => {
+  const loggerConfig = new LoggerConfig()
+  const userEdition: UserEdition = { name: 'name' }
+  const user: User = generateUser()
+  it('returns 200 with the user', async () => {
+    const usersService: UsersService = usersServiceMock({
+      editUser: jest.fn().mockImplementation(() => {
+        return EitherI.Right(user)
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.editUser(
+      mockRequest({ id: user.id }, userEdition, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(200)
+    expect(mockResponse.body).toEqual(user)
+    expect(usersService.editUser).toBeCalledWith(user.id, userEdition)
+  })
+
+  it('returns 404', async () => {
+    const usersService: UsersService = usersServiceMock({
+      editUser: jest.fn().mockImplementation(() => {
+        return EitherI.Left(new NotFound())
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.editUser(
+      mockRequest({ id: user.id }, userEdition, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(404)
+    expect(usersService.editUser).toBeCalledWith(user.id, userEdition)
+  })
+  it('returns 500', async () => {
+    const usersService: UsersService = usersServiceMock({
+      editUser: jest.fn().mockImplementation(() => {
+        return EitherI.Left(new Internal())
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.editUser(
+      mockRequest({ id: user.id }, userEdition, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(500)
+    expect(usersService.editUser).toBeCalledWith(user.id, userEdition)
   })
 })
 

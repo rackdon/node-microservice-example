@@ -5,6 +5,7 @@ import {
   toUsersFilters,
   User,
   UserCreation,
+  UserEdition,
 } from '../../model/users'
 import { DataWithPages, toPagination } from '../../model/pagination'
 import { UsersRepository } from '../../repository/usersRepository'
@@ -24,6 +25,13 @@ export class UsersService {
     userCreation: UserCreation
   ): Promise<Either<ApiError, User>> {
     return this.usersRepository.insertUser(userCreation)
+  }
+
+  async editUser(
+    userId: string,
+    userEdition: UserEdition
+  ): Promise<Either<ApiError, User>> {
+    return this.usersRepository.updateUser(userId, userEdition)
   }
 
   async getUsers(

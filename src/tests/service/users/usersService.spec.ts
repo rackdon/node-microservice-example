@@ -1,6 +1,11 @@
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 
-import { User, UserCreation, UsersFilters } from '../../../model/users'
+import {
+  User,
+  UserCreation,
+  UserEdition,
+  UsersFilters,
+} from '../../../model/users'
 import { LoggerConfig } from '../../../configuration/loggerConfig'
 import { UsersService } from '../../../service/users/usersService'
 import { DataWithPages, Pagination } from '../../../model/pagination'
@@ -29,6 +34,24 @@ describe('Create user', () => {
 
     expectRight(result).toEqual(user)
     expect(usersRepository.insertUser).toBeCalledWith(userCreation)
+  })
+})
+
+describe('Edit user', () => {
+  it('return repository response', async () => {
+    const userEdition: UserEdition = { name: 'name' }
+    const user: User = generateUser()
+    const usersRepository: UsersRepository = usersRepositoryMock({
+      updateUser: jest.fn().mockImplementation(() => {
+        return EitherI.Right(user)
+      }),
+    })
+    const loggerConfig = new LoggerConfig()
+    const service = new UsersService(usersRepository, loggerConfig)
+    const result = await service.editUser(user.id, userEdition)
+
+    expectRight(result).toEqual(user)
+    expect(usersRepository.updateUser).toBeCalledWith(user.id, userEdition)
   })
 })
 
