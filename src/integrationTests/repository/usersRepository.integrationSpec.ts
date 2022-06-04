@@ -8,10 +8,11 @@ import { User } from '../../model/users'
 import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
-import { ApiError, Conflict } from '../../model/error'
+import { ApiError, Conflict, NotFound } from '../../model/error'
 import { generatePagination } from '../../tests/utils/generators/paginationGenerator'
 import { Either } from '../../model/either'
 import { expectLeft, expectRight } from '../../tests/utils/expects'
+import { randomUUID } from 'crypto'
 
 describe('usersRepository', () => {
   const dbConfig = new PostgresqlConfig({
@@ -71,5 +72,17 @@ describe('usersRepository', () => {
       generatePagination()
     )
     expectRight(result).toEqual({ data: [user2], pages: 1 })
+  })
+
+  it('getUserById returns user', async () => {
+    const user: User = await factory.insertUser()
+    const result = await usersRepository.getUserById(user.id)
+    expectRight(result).toEqual(user)
+  })
+
+  it('getUserById returns not found', async () => {
+    const uuid = randomUUID()
+    const result = await usersRepository.getUserById(uuid)
+    expectLeft(result).toEqual(new NotFound())
   })
 })

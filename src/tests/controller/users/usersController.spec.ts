@@ -6,7 +6,7 @@ import { UsersService } from '../../../service/users/usersService'
 import { usersServiceMock } from '../../mocks/users/usersMocks'
 import { mockRequest, MockResponse } from '../utils'
 import { UsersController } from '../../../controller/users/usersController'
-import { BadRequest, Conflict, Internal } from '../../../model/error'
+import { BadRequest, Conflict, Internal, NotFound } from '../../../model/error'
 import { DataWithPages } from '../../../model/pagination'
 import {
   generateUser,
@@ -123,5 +123,63 @@ describe('Get users', () => {
 
     expect(mockResponse.statusCode).toEqual(500)
     expect(usersService.getUsers).toBeCalledTimes(1)
+  })
+})
+
+describe('Get user by id', () => {
+  const loggerConfig = new LoggerConfig()
+  const userData: User = generateUser()
+  it('returns 200 with the users', async () => {
+    const usersService: UsersService = usersServiceMock({
+      getUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Right(userData)
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.getUserById(
+      mockRequest({ id: userData.id }, null, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(200)
+    expect(mockResponse.body).toEqual(userData)
+    expect(usersService.getUserById).toBeCalledWith(userData.id)
+  })
+
+  it('returns 404', async () => {
+    const usersService: UsersService = usersServiceMock({
+      getUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Left(new NotFound())
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.getUserById(
+      mockRequest({ id: userData.id }, null, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(404)
+    expect(usersService.getUserById).toBeCalledWith(userData.id)
+  })
+  it('returns 500', async () => {
+    const usersService: UsersService = usersServiceMock({
+      getUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Left(new Internal())
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.getUserById(
+      mockRequest({ id: userData.id }, null, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(500)
+    expect(usersService.getUserById).toBeCalledWith(userData.id)
   })
 })

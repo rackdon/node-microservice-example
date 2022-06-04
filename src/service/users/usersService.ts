@@ -33,4 +33,8 @@ export class UsersService {
     const paginationFilters = toPagination(filters)
     return this.usersRepository.getUsers(userFilters, paginationFilters)
   }
+
+  async getUserById(id: string): Promise<Either<ApiError, User>> {
+    return this.usersRepository.getUserById(id)
+  }
 }

@@ -7,6 +7,7 @@ export function usersServiceMock(args: Record<string, unknown>): UsersService {
     logger: args.logger,
     createUser: args.createUser,
     getUsers: args.getUsers,
+    getUserById: args.getUserById,
   }
 }
 
@@ -18,5 +19,6 @@ export function usersRepositoryMock(
     logger: args.logger,
     insertUser: args.insertUser,
     getUsers: args.getUsers,
+    getUserById: args.getUserById,
   }
 }

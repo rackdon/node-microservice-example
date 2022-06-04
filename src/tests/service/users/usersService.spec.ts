@@ -59,3 +59,20 @@ describe('Get users', () => {
     )
   })
 })
+
+describe('Get user by id', () => {
+  it('returns repository response', async () => {
+    const userData: User = generateUser()
+    const usersRepository: UsersRepository = usersRepositoryMock({
+      getUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Right(userData)
+      }),
+    })
+    const loggerConfig = new LoggerConfig()
+    const service = new UsersService(usersRepository, loggerConfig)
+    const result = await service.getUserById(userData.id)
+
+    expectRight(result).toEqual(userData)
+    expect(usersRepository.getUserById).toBeCalledWith(userData.id)
+  })
+})

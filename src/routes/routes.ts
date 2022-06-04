@@ -20,5 +20,6 @@ export class Routes {
       validateQueryParams(UserFilterValidator.ValidationInstance),
       usersController.getUsers
     )
+    this.router.get('/users/:id', usersController.getUserById)
   }
 }

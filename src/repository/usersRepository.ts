@@ -8,7 +8,7 @@ import { User, UserCreation, UsersFilters } from '../model/users'
 import { Sequelize } from 'sequelize'
 import { manageDbErrors } from './errors'
 import { getPages, getPaginationQuery } from './pagination'
-import { ApiError } from '../model/error'
+import { ApiError, NotFound } from '../model/error'
 import { Either, EitherI } from '../model/either'
 
 export class UsersRepository {
@@ -55,5 +55,15 @@ export class UsersRepository {
     return result.mapLeft((e) => {
       return manageDbErrors(e, this.logger)
     })
+  }
+
+  async getUserById(id: string): Promise<Either<ApiError, User>> {
+    const result = await EitherI.catchA(async () => {
+      const result = await this.pgClient.models.User.findByPk(id)
+      return result?.get()
+    })
+    return result.isRight() && !result.extract()
+      ? EitherI.Left(new NotFound())
+      : result
   }
 }

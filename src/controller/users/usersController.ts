@@ -3,7 +3,13 @@
 import winston from 'winston'
 import { LoggerConfig } from '../../configuration/loggerConfig'
 import { UsersService } from '../../service/users/usersService'
-import { ApiError, BadRequest, Conflict, Internal } from '../../model/error'
+import {
+  ApiError,
+  BadRequest,
+  Conflict,
+  Internal,
+  NotFound,
+} from '../../model/error'
 import { User } from '../../model/users'
 import { DataWithPages } from '../../model/pagination'
 
@@ -59,6 +65,29 @@ export class UsersController {
         }
       },
       (users: DataWithPages<User>) => res.status(200).json(users)
+    )
+  }
+
+  getUserById = async (req, res): Promise<void> => {
+    const result = await this.usersService.getUserById(req.params.id)
+    result.fold(
+      (error: ApiError) => {
+        switch (error?.constructor) {
+          case NotFound: {
+            res.status(404).send()
+            break
+          }
+          case Internal: {
+            res.status(500).send()
+            break
+          }
+          default: {
+            this.logger.warn(`Unexpected error: ${error}`)
+            res.status(500).send()
+          }
+        }
+      },
+      (user: User) => res.status(200).json(user)
     )
   }
 }
