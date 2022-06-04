@@ -13,6 +13,7 @@ import {
   generateUserCreation,
 } from '../../utils/generators/usersGenerator'
 import { EitherI } from '../../../model/either'
+import { randomUUID } from 'crypto'
 
 describe('Create user', () => {
   const loggerConfig = new LoggerConfig()
@@ -181,5 +182,45 @@ describe('Get user by id', () => {
 
     expect(mockResponse.statusCode).toEqual(500)
     expect(usersService.getUserById).toBeCalledWith(userData.id)
+  })
+})
+
+describe('Delete user by id', () => {
+  const loggerConfig = new LoggerConfig()
+  const userId = randomUUID()
+  it('returns 204', async () => {
+    const usersService: UsersService = usersServiceMock({
+      deleteUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Right(1)
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.deleteUserById(
+      mockRequest({ id: userId }, null, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(204)
+    expect(usersService.deleteUserById).toBeCalledWith(userId)
+  })
+
+  it('returns 500', async () => {
+    const usersService: UsersService = usersServiceMock({
+      deleteUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Left(new Internal())
+      }),
+    })
+    const mockResponse = new MockResponse()
+    const controller = new UsersController(usersService, loggerConfig)
+
+    await controller.deleteUserById(
+      mockRequest({ id: userId }, null, null),
+      mockResponse
+    )
+
+    expect(mockResponse.statusCode).toEqual(500)
+    expect(usersService.deleteUserById).toBeCalledWith(userId)
   })
 })

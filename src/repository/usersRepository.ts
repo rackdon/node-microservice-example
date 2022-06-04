@@ -62,8 +62,24 @@ export class UsersRepository {
       const result = await this.pgClient.models.User.findByPk(id)
       return result?.get()
     })
-    return result.isRight() && !result.extract()
-      ? EitherI.Left(new NotFound())
-      : result
+    return result
+      .fold(
+        (e) => {
+          return manageDbErrors(e, this.logger)
+        },
+        (user) => {
+          return user ? result : EitherI.Left(new NotFound())
+        }
+      )
+      .bind()
+  }
+
+  async deleteUserById(id: string): Promise<Either<ApiError, number>> {
+    const result = await EitherI.catchA(async () => {
+      return await this.pgClient.models.User.destroy({ where: { id } })
+    })
+    return result.mapLeft((e) => {
+      return manageDbErrors(e, this.logger)
+    })
   }
 }

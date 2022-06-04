@@ -21,5 +21,6 @@ export class Routes {
       usersController.getUsers
     )
     this.router.get('/users/:id', usersController.getUserById)
+    this.router.delete('/users/:id', usersController.deleteUserById)
   }
 }

@@ -12,6 +12,7 @@ import {
 } from '../../utils/generators/usersGenerator'
 import { EitherI } from '../../../model/either'
 import { expectRight } from '../../utils/expects'
+import { randomUUID } from 'crypto'
 
 describe('Create user', () => {
   it('returns repository response', async () => {
@@ -74,5 +75,22 @@ describe('Get user by id', () => {
 
     expectRight(result).toEqual(userData)
     expect(usersRepository.getUserById).toBeCalledWith(userData.id)
+  })
+})
+
+describe('Delete user by id', () => {
+  it('returns repository response', async () => {
+    const userId = randomUUID()
+    const usersRepository: UsersRepository = usersRepositoryMock({
+      deleteUserById: jest.fn().mockImplementation(() => {
+        return EitherI.Right(1)
+      }),
+    })
+    const loggerConfig = new LoggerConfig()
+    const service = new UsersService(usersRepository, loggerConfig)
+    const result = await service.deleteUserById(userId)
+
+    expectRight(result).toEqual(1)
+    expect(usersRepository.deleteUserById).toBeCalledWith(userId)
   })
 })

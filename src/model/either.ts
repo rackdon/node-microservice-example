@@ -102,6 +102,16 @@ export class EitherI<A, B> {
       : this
   }
 
+  bind(): Either<A, B> {
+    if (this.isRight()) {
+      return this.b instanceof EitherI
+        ? (this.b as unknown as Either<A, B>)
+        : this
+    } else {
+      return this
+    }
+  }
+
   swap(): EitherI<B, A> {
     return new EitherI(this.b, this.a)
   }

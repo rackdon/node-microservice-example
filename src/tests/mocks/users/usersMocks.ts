@@ -8,6 +8,7 @@ export function usersServiceMock(args: Record<string, unknown>): UsersService {
     createUser: args.createUser,
     getUsers: args.getUsers,
     getUserById: args.getUserById,
+    deleteUserById: args.deleteUserById,
   }
 }
 
@@ -20,5 +21,6 @@ export function usersRepositoryMock(
     insertUser: args.insertUser,
     getUsers: args.getUsers,
     getUserById: args.getUserById,
+    deleteUserById: args.deleteUserById,
   }
 }

@@ -62,6 +62,15 @@ describe('Either with right value', () => {
     expect(doubleEither.flatten()).toEqual(EitherI.Right(1))
   })
 
+  it('bind returns the left of the right side', () => {
+    const doubleEither = EitherI.Right(EitherI.Left(1))
+    expect(doubleEither.bind()).toEqual(EitherI.Left(1))
+  })
+  it('bind returns the right side if exists', () => {
+    const doubleEither = EitherI.Right(2)
+    expect(doubleEither.bind()).toEqual(EitherI.Right(2))
+  })
+
   it('swap convert either right to either left', async () => {
     expect(eitherRight.swap()).toEqual(EitherI.Left(1))
   })

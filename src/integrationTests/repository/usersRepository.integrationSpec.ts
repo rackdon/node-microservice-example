@@ -8,7 +8,7 @@ import { User } from '../../model/users'
 import { Factory } from '../utils/factory'
 import { UsersRepository } from '../../repository/usersRepository'
 import { generateUser } from '../../tests/utils/generators/usersGenerator'
-import { ApiError, Conflict, NotFound } from '../../model/error'
+import { ApiError, Conflict, Internal, NotFound } from '../../model/error'
 import { generatePagination } from '../../tests/utils/generators/paginationGenerator'
 import { Either } from '../../model/either'
 import { expectLeft, expectRight } from '../../tests/utils/expects'
@@ -65,7 +65,7 @@ describe('usersRepository', () => {
   })
 
   it('getUsers returns all users that match email query', async () => {
-    const user1: User = await factory.insertUser()
+    const _: User = await factory.insertUser()
     const user2: User = await factory.insertUser()
     const result = await usersRepository.getUsers(
       { email: user2.email },
@@ -84,5 +84,22 @@ describe('usersRepository', () => {
     const uuid = randomUUID()
     const result = await usersRepository.getUserById(uuid)
     expectLeft(result).toEqual(new NotFound())
+  })
+
+  it('deleteById deletes the user returning 1', async () => {
+    const user: User = await factory.insertUser()
+    const result = await usersRepository.deleteUserById(user.id)
+    expectRight(result).toEqual(1)
+  })
+
+  it('deleteById with non existent user returns 0', async () => {
+    const uuid = randomUUID()
+    const result = await usersRepository.deleteUserById(uuid)
+    expectRight(result).toEqual(0)
+  })
+
+  it('deleteById manage db error correctly', async () => {
+    const result = await usersRepository.deleteUserById('asdf')
+    expectLeft(result).toEqual(new Internal())
   })
 })

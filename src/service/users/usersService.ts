@@ -37,4 +37,8 @@ export class UsersService {
   async getUserById(id: string): Promise<Either<ApiError, User>> {
     return this.usersRepository.getUserById(id)
   }
+
+  async deleteUserById(id: string): Promise<Either<ApiError, number>> {
+    return this.usersRepository.deleteUserById(id)
+  }
 }

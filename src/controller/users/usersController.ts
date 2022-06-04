@@ -90,4 +90,24 @@ export class UsersController {
       (user: User) => res.status(200).json(user)
     )
   }
+
+  deleteUserById = async (req, res): Promise<void> => {
+    const result = await this.usersService.deleteUserById(req.params.id)
+    result.fold(
+      (error: ApiError) => {
+        switch (error?.constructor) {
+          case Internal: {
+            res.status(500).send()
+            break
+          }
+          default: {
+            this.logger.warn(`Unexpected error: ${error}`)
+            res.status(500).send()
+          }
+        }
+      },
+      /* eslint-disable  @typescript-eslint/no-unused-vars */
+      (n: number) => res.status(204).send()
+    )
+  }
 }
