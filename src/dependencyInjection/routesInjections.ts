@@ -1,5 +1,7 @@
 import { Routes } from '../routes/routes'
-import { usersController } from './usersInjections'
+import { usersController, usersGraphController } from "./usersInjections";
+import { GraphRoutes } from "../routes/graphRoutes";
 
 const routes = new Routes(usersController)
-export { routes }
+const graphRoutes = new GraphRoutes(usersGraphController)
+export { routes, graphRoutes }

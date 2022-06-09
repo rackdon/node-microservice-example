@@ -29,10 +29,10 @@ export class PostgresqlClient {
     const instance = new PostgresqlClient(config, loggerConfig)
 
     instance.client.validate().then(() => {
-      new EntitiesInitializer(instance.client)
       instance.closedConnection = false
       instance.logger.info('DB connected')
     })
+    new EntitiesInitializer(instance.client)
     return instance
   }
 

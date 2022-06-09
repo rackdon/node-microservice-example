@@ -10,7 +10,7 @@ import {
   serverConfig,
 } from './dependencyInjection/configInjections'
 import { serverHealth } from './dependencyInjection/serverHealthInjections'
-import { routes } from './dependencyInjection/routesInjections'
+import { graphRoutes, routes } from "./dependencyInjection/routesInjections";
 
 const app: express.Application = express()
 const server = http.createServer(app)
@@ -18,7 +18,7 @@ sentryConfig.init(app)
 
 app.use(Sentry.Handlers.requestHandler())
 app.use(morgan('common'))
-app.use(helmet())
+app.use(helmet({ contentSecurityPolicy: false}))
 app.use(compression())
 
 createTerminus(server, {
@@ -27,7 +27,8 @@ createTerminus(server, {
   onShutdown: serverHealth.onShutdown,
 })
 
-app.use('/api/', express.json(), routes.router)
+app.use('/api', express.json(), routes.router)
+app.use('/graph', graphRoutes.router)
 
 app.use(Sentry.Handlers.errorHandler())
 
