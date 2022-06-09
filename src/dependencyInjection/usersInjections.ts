@@ -3,7 +3,7 @@ import { UsersService } from '../service/users/usersService'
 import { UsersController } from '../controller/users/usersController'
 import { UsersRepository } from '../repository/usersRepository'
 import { pgClient } from './postgresqlInjections'
-import { UsersGraphController } from "../graphController/users/usersGraphController";
+import { UsersGraphController } from '../graphController/users/usersGraphController'
 
 const usersRepository = new UsersRepository(pgClient, loggerConfig)
 const usersService = new UsersService(usersRepository, loggerConfig)
